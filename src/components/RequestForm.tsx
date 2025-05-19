@@ -9,15 +9,25 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   amount: z.coerce.number().positive('Amount must be positive').min(1, 'Amount is required'),
   purpose: z.string().min(5, 'Purpose must be at least 5 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   attachmentUrl: z.string().optional(),
+  requestedFor: z.string().min(1, 'Please select who this request is for'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+// Mock staff list
+const staffList = [
+  { id: '101', name: 'John Staff' },
+  { id: '102', name: 'Sarah Security' },
+  { id: '103', name: 'Mike Guard' },
+  { id: '104', name: 'Lisa Patrol' },
+];
 
 const RequestForm: React.FC = () => {
   const { createRequest } = useRequests();
@@ -29,6 +39,7 @@ const RequestForm: React.FC = () => {
       purpose: '',
       description: '',
       attachmentUrl: '',
+      requestedFor: '',
     },
   });
 
@@ -38,16 +49,44 @@ const RequestForm: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>New Fund Request</CardTitle>
+    <Card className="border-gold-200 bg-white shadow">
+      <CardHeader className="bg-black/5">
+        <CardTitle className="text-red-900">New Fund Request</CardTitle>
         <CardDescription>
           Complete the form below to submit a new fund request
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="requestedFor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Request For</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select staff member" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {staffList.map((staff) => (
+                        <SelectItem key={staff.id} value={staff.name}>
+                          {staff.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
             <FormField
               control={form.control}
               name="amount"
@@ -119,7 +158,7 @@ const RequestForm: React.FC = () => {
               )}
             />
             
-            <Button type="submit" className="w-full">Submit Request</Button>
+            <Button type="submit" className="w-full bg-red-900 hover:bg-red-800">Submit Request</Button>
           </form>
         </Form>
       </CardContent>

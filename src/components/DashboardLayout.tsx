@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
-import { Shield, LogOut } from 'lucide-react';
+import { Shield, LogOut, Zap } from 'lucide-react';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -31,25 +31,27 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
+      <header className="bg-black text-white shadow-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Shield className="h-8 w-8 text-security-700 mr-3" />
-            <h1 className="text-xl font-semibold text-gray-900">Security Funds Manager</h1>
+            <Zap className="h-8 w-8 text-yellow-500 mr-3" />
+            <h1 className="text-xl font-bold tracking-wide">
+              <span className="text-yellow-500">Thunder</span> Bolt <span className="text-red-600">Watch</span>
+            </h1>
           </div>
           
           <div className="flex items-center">
             {currentUser && (
               <div className="flex items-center space-x-4">
                 <div className="text-sm text-right">
-                  <p className="font-medium text-gray-700">{currentUser.name}</p>
-                  <p className="text-gray-500 capitalize">{currentUser.role}</p>
+                  <p className="font-medium text-gray-300">{currentUser.name}</p>
+                  <p className="text-red-400 capitalize">{currentUser.role}</p>
                 </div>
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-8 w-8 border border-yellow-500/50">
                   <AvatarImage src={currentUser.photoURL} alt={currentUser.name} />
-                  <AvatarFallback>{getInitials(currentUser.name)}</AvatarFallback>
+                  <AvatarFallback className="bg-red-900 text-white">{getInitials(currentUser.name)}</AvatarFallback>
                 </Avatar>
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="text-gray-300 hover:text-white hover:bg-red-900/20">
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </Button>
@@ -62,7 +64,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
       <main className="py-6 sm:py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-2xl font-bold text-red-900">{title}</h2>
           </div>
           
           <div className="space-y-6">
@@ -70,6 +72,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
           </div>
         </div>
       </main>
+      
+      <footer className="bg-black/5 border-t border-gold-100 py-4 mt-12">
+        <div className="container mx-auto text-center text-sm text-gray-600">
+          <p>© {new Date().getFullYear()} Thunder Bolt Watch. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };

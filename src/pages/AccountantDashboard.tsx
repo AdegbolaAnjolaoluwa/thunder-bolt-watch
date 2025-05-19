@@ -3,6 +3,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRequests } from '@/contexts/RequestContext';
 import DashboardLayout from '@/components/DashboardLayout';
+import RequestForm from '@/components/RequestForm';
 import RequestList from '@/components/RequestList';
 import StatsCards from '@/components/StatsCards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,13 +17,16 @@ const AccountantDashboard: React.FC = () => {
     requests, 
     getApprovedRequests, 
     getReleasedRequests,
-    releaseFunds
+    getDoneRequests,
+    releaseFunds,
+    markAsDone
   } = useRequests();
 
   if (!currentUser) return null;
 
   const approvedRequests = getApprovedRequests();
   const releasedRequests = getReleasedRequests();
+  const doneRequests = getDoneRequests();
 
   const handleExportReports = () => {
     toast.success("Report generated", {
@@ -38,37 +42,53 @@ const AccountantDashboard: React.FC = () => {
           <StatsCards requests={requests} userRole="accountant" />
         </div>
         <div className="ml-4">
-          <Button onClick={handleExportReports}>
+          <Button onClick={handleExportReports} className="bg-red-900 hover:bg-red-800">
             <Download className="mr-2 h-4 w-4" />
             Export Reports
           </Button>
         </div>
       </div>
       
-      <div className="mt-6">
-        <Tabs defaultValue="pending">
-          <TabsList className="grid grid-cols-2 mb-4">
-            <TabsTrigger value="pending">Pending Release ({approvedRequests.length})</TabsTrigger>
-            <TabsTrigger value="released">Released ({releasedRequests.length})</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="pending">
-            <RequestList
-              requests={approvedRequests}
-              title="Pending Fund Release"
-              description="Requests approved by CEO, awaiting your fund release"
-              onRelease={releaseFunds}
-            />
-          </TabsContent>
-          
-          <TabsContent value="released">
-            <RequestList
-              requests={releasedRequests}
-              title="Released Funds"
-              description="Requests with funds already released"
-            />
-          </TabsContent>
-        </Tabs>
+      <div className="grid md:grid-cols-3 gap-6 mt-6">
+        <div className="md:col-span-1">
+          <RequestForm />
+        </div>
+        
+        <div className="md:col-span-2">
+          <Tabs defaultValue="pending">
+            <TabsList className="grid grid-cols-3 mb-4">
+              <TabsTrigger value="pending">Pending Release ({approvedRequests.length})</TabsTrigger>
+              <TabsTrigger value="released">Active ({releasedRequests.length})</TabsTrigger>
+              <TabsTrigger value="done">Completed ({doneRequests.length})</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="pending">
+              <RequestList
+                requests={approvedRequests}
+                title="Pending Fund Release"
+                description="Requests approved by CEO, awaiting your fund release"
+                onRelease={releaseFunds}
+              />
+            </TabsContent>
+            
+            <TabsContent value="released">
+              <RequestList
+                requests={releasedRequests}
+                title="Active Requests"
+                description="Requests with funds released but not yet completed"
+                onMarkDone={markAsDone}
+              />
+            </TabsContent>
+            
+            <TabsContent value="done">
+              <RequestList
+                requests={doneRequests}
+                title="Completed Requests"
+                description="Requests that have been marked as done"
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </DashboardLayout>
   );

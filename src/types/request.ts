@@ -1,5 +1,5 @@
 
-export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'released';
+export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'released' | 'done';
 
 export interface FundRequest {
   id: string;
@@ -12,8 +12,11 @@ export interface FundRequest {
   dateCreated: string;
   dateApproved?: string;
   dateReleased?: string;
+  dateDone?: string;
   approvedBy?: string;
   releasedBy?: string;
+  doneBy?: string;
   ceoComments?: string;
   attachmentUrl?: string;
+  requestedFor?: string; // Added to track who the request is for (staff name)
 }

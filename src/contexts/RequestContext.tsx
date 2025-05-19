@@ -10,11 +10,13 @@ interface RequestContextType {
   approveRequest: (requestId: string, comments?: string) => void;
   rejectRequest: (requestId: string, comments?: string) => void;
   releaseFunds: (requestId: string) => void;
+  markAsDone: (requestId: string) => void; // New function
   getUserRequests: (userId: string) => FundRequest[];
   getPendingRequests: () => FundRequest[];
   getApprovedRequests: () => FundRequest[];
   getRejectedRequests: () => FundRequest[];
   getReleasedRequests: () => FundRequest[];
+  getDoneRequests: () => FundRequest[]; // New function
 }
 
 // Mock initial requests for demonstration
@@ -22,7 +24,8 @@ const INITIAL_REQUESTS: FundRequest[] = [
   {
     id: '1',
     userId: '1',
-    userName: 'John Staff',
+    userName: 'Mark Accountant',
+    requestedFor: 'John Staff',
     amount: 5000,
     purpose: 'Equipment purchase',
     description: 'New security cameras for the north facility',
@@ -32,7 +35,8 @@ const INITIAL_REQUESTS: FundRequest[] = [
   {
     id: '2',
     userId: '1',
-    userName: 'John Staff',
+    userName: 'Mark Accountant',
+    requestedFor: 'John Staff',
     amount: 2500,
     purpose: 'Vehicle maintenance',
     description: 'Routine maintenance for patrol vehicles',
@@ -45,7 +49,8 @@ const INITIAL_REQUESTS: FundRequest[] = [
   {
     id: '3',
     userId: '1',
-    userName: 'John Staff',
+    userName: 'Mark Accountant',
+    requestedFor: 'John Staff',
     amount: 10000,
     purpose: 'Training program',
     description: 'Annual staff security training',
@@ -59,7 +64,8 @@ const INITIAL_REQUESTS: FundRequest[] = [
   {
     id: '4',
     userId: '1',
-    userName: 'John Staff',
+    userName: 'Mark Accountant',
+    requestedFor: 'John Staff',
     amount: 3000,
     purpose: 'Travel expenses',
     description: 'Client site visit in Los Angeles',
@@ -83,6 +89,14 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
     if (!currentUser) {
       toast.error("Authentication required", {
         description: "You must be logged in to create a request"
+      });
+      return;
+    }
+
+    // Only allow accountants to create requests
+    if (currentUser.role !== 'accountant') {
+      toast.error("Permission denied", {
+        description: "Only accountants can create fund requests"
       });
       return;
     }
@@ -183,6 +197,33 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
     });
   };
 
+  // New function to mark released funds as done
+  const markAsDone = (requestId: string) => {
+    if (!currentUser || currentUser.role !== 'accountant') {
+      toast.error("Permission denied", {
+        description: "Only accountants can mark requests as done"
+      });
+      return;
+    }
+
+    setRequests(prevRequests =>
+      prevRequests.map(request =>
+        request.id === requestId && request.status === 'released'
+          ? {
+              ...request,
+              status: 'done',
+              dateDone: new Date().toISOString(),
+              doneBy: currentUser.name
+            }
+          : request
+      )
+    );
+
+    toast.success("Request completed", {
+      description: `Fund request #${requestId} has been marked as done`
+    });
+  };
+
   const getUserRequests = (userId: string) => {
     return requests.filter(request => request.userId === userId);
   };
@@ -195,6 +236,7 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
   const getApprovedRequests = () => getRequestsByStatus('approved');
   const getRejectedRequests = () => getRequestsByStatus('rejected');
   const getReleasedRequests = () => getRequestsByStatus('released');
+  const getDoneRequests = () => getRequestsByStatus('done');
 
   const value = {
     requests,
@@ -202,11 +244,13 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
     approveRequest,
     rejectRequest,
     releaseFunds,
+    markAsDone,
     getUserRequests,
     getPendingRequests,
     getApprovedRequests,
     getRejectedRequests,
-    getReleasedRequests
+    getReleasedRequests,
+    getDoneRequests
   };
 
   return <RequestContext.Provider value={value}>{children}</RequestContext.Provider>;

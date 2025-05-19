@@ -24,6 +24,7 @@ interface RequestListProps {
   onApprove?: (id: string, comments: string) => void;
   onReject?: (id: string, comments: string) => void;
   onRelease?: (id: string) => void;
+  onMarkDone?: (id: string) => void; // New prop
 }
 
 const RequestList: React.FC<RequestListProps> = ({
@@ -33,6 +34,7 @@ const RequestList: React.FC<RequestListProps> = ({
   onApprove,
   onReject,
   onRelease,
+  onMarkDone, // New prop
 }) => {
   const { currentUser } = useAuth();
   const [selectedRequest, setSelectedRequest] = useState<FundRequest | null>(null);
@@ -69,6 +71,8 @@ const RequestList: React.FC<RequestListProps> = ({
         return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Rejected</Badge>;
       case 'released':
         return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Released</Badge>;
+      case 'done':
+        return <Badge variant="outline" className="bg-black bg-opacity-80 text-gray-100 border-gray-700">Done</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -86,18 +90,19 @@ const RequestList: React.FC<RequestListProps> = ({
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
+      <Card className="border-gold-200 bg-white shadow">
+        <CardHeader className="bg-black/5 border-b border-gold-100">
+          <CardTitle className="text-red-900">{title}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           <Table>
             <TableCaption>List of {requests.length} fund requests</TableCaption>
-            <TableHeader>
+            <TableHeader className="bg-black/5">
               <TableRow>
                 <TableHead>ID</TableHead>
                 {currentUser?.role !== 'staff' && <TableHead>Requestor</TableHead>}
+                {currentUser?.role === 'accountant' && <TableHead>Requested For</TableHead>}
                 <TableHead>Amount</TableHead>
                 <TableHead>Purpose</TableHead>
                 <TableHead>Date Created</TableHead>
@@ -108,7 +113,7 @@ const RequestList: React.FC<RequestListProps> = ({
             <TableBody>
               {requests.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={currentUser?.role !== 'staff' ? 7 : 6} className="text-center text-gray-500">
+                  <TableCell colSpan={currentUser?.role === 'accountant' ? 8 : (currentUser?.role !== 'staff' ? 7 : 6)} className="text-center text-gray-500">
                     No requests found
                   </TableCell>
                 </TableRow>
@@ -117,14 +122,15 @@ const RequestList: React.FC<RequestListProps> = ({
                   <TableRow key={request.id}>
                     <TableCell className="font-medium">{request.id}</TableCell>
                     {currentUser?.role !== 'staff' && <TableCell>{request.userName}</TableCell>}
-                    <TableCell>${request.amount.toLocaleString()}</TableCell>
+                    {currentUser?.role === 'accountant' && <TableCell>{request.requestedFor || '-'}</TableCell>}
+                    <TableCell className="text-red-800 font-medium">${request.amount.toLocaleString()}</TableCell>
                     <TableCell>{request.purpose}</TableCell>
                     <TableCell>{formatDate(request.dateCreated)}</TableCell>
                     <TableCell>{getStatusBadge(request.status)}</TableCell>
                     <TableCell>
                       {currentUser?.role === 'ceo' && request.status === 'pending' && (
                         <div className="flex space-x-2">
-                          <Button size="sm" onClick={() => handleAction(request, 'approve')}>
+                          <Button size="sm" className="bg-red-900 hover:bg-red-800" onClick={() => handleAction(request, 'approve')}>
                             Approve
                           </Button>
                           <Button size="sm" variant="destructive" onClick={() => handleAction(request, 'reject')}>
@@ -133,8 +139,13 @@ const RequestList: React.FC<RequestListProps> = ({
                         </div>
                       )}
                       {currentUser?.role === 'accountant' && request.status === 'approved' && onRelease && (
-                        <Button size="sm" onClick={() => onRelease(request.id)}>
+                        <Button size="sm" className="bg-red-900 hover:bg-red-800" onClick={() => onRelease(request.id)}>
                           Release Funds
+                        </Button>
+                      )}
+                      {currentUser?.role === 'accountant' && request.status === 'released' && onMarkDone && (
+                        <Button size="sm" className="bg-black hover:bg-black/80 text-white" onClick={() => onMarkDone(request.id)}>
+                          Mark as Done
                         </Button>
                       )}
                     </TableCell>
@@ -147,9 +158,9 @@ const RequestList: React.FC<RequestListProps> = ({
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="border-gold-200">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-red-900">
               {actionType === 'approve' ? 'Approve Request' : 'Reject Request'}
             </DialogTitle>
             <DialogDescription>
@@ -163,7 +174,7 @@ const RequestList: React.FC<RequestListProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-500">Amount</p>
-                <p className="text-sm">${selectedRequest?.amount.toLocaleString()}</p>
+                <p className="text-sm text-red-800 font-medium">${selectedRequest?.amount.toLocaleString()}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Purpose</p>
@@ -180,7 +191,7 @@ const RequestList: React.FC<RequestListProps> = ({
                 value={comments}
                 onChange={(e) => setComments(e.target.value)}
                 placeholder="Add your comments here..."
-                className="mt-1"
+                className="mt-1 border-gold-200"
               />
             </div>
           </div>
@@ -191,6 +202,7 @@ const RequestList: React.FC<RequestListProps> = ({
             </Button>
             <Button 
               onClick={confirmAction} 
+              className={actionType === 'approve' ? "bg-red-900 hover:bg-red-800 text-white" : ""}
               variant={actionType === 'approve' ? 'default' : 'destructive'}
               disabled={actionType === 'reject' && !comments}
             >
