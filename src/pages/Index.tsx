@@ -16,9 +16,6 @@ const Index = () => {
     // Redirect based on user role
     if (currentUser) {
       switch (currentUser.role) {
-        case 'staff':
-          navigate('/staff');
-          break;
         case 'ceo':
           navigate('/ceo');
           break;
