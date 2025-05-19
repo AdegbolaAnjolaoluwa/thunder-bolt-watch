@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Shield, Lock } from 'lucide-react';
+import { Shield, Lock, Zap } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const formSchema = z.object({
@@ -47,7 +47,6 @@ const LoginPage: React.FC = () => {
 
   // Mock credentials for demonstration
   const sampleCredentials = [
-    { role: 'Staff', email: 'staff@example.com', password: 'password' },
     { role: 'CEO', email: 'ceo@example.com', password: 'password' },
     { role: 'Accountant', email: 'accountant@example.com', password: 'password' },
   ];
@@ -58,28 +57,28 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-black/5 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center">
-            <Shield className="h-12 w-12 text-security-700" />
+            <Zap className="h-12 w-12 text-yellow-500" />
           </div>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900">
-            Security Funds Manager
+            <span className="text-yellow-500">Thunder</span> Bolt <span className="text-red-600">Watch</span>
           </h1>
           <p className="mt-2 text-sm text-gray-600">
             Sign in to access your dashboard
           </p>
         </div>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign In</CardTitle>
+        <Card className="border-gold-200">
+          <CardHeader className="bg-black/5 border-b border-gold-100">
+            <CardTitle className="text-red-900">Sign In</CardTitle>
             <CardDescription>
               Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-5">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -125,22 +124,23 @@ const LoginPage: React.FC = () => {
                   </Alert>
                 )}
                 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-red-900 hover:bg-red-800" disabled={isLoading}>
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
             </Form>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 border-t border-gold-100 bg-black/5">
             <div className="text-sm text-center text-gray-500">
               For demonstration purposes, use one of these accounts:
             </div>
-            <div className="grid grid-cols-3 gap-2 w-full">
+            <div className="grid grid-cols-2 gap-2 w-full">
               {sampleCredentials.map((cred) => (
                 <Button
                   key={cred.role}
                   variant="outline"
                   size="sm"
+                  className="border-gold-200 hover:bg-gold-50"
                   onClick={() => fillCredentials(cred.email, cred.password)}
                 >
                   {cred.role}

@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { RequestProvider } from "./contexts/RequestContext";
 import LoginPage from "./pages/LoginPage";
-import StaffDashboard from "./pages/StaffDashboard";
 import CEODashboard from "./pages/CEODashboard";
 import AccountantDashboard from "./pages/AccountantDashboard";
 import NotFound from "./pages/NotFound";
@@ -28,9 +27,7 @@ const ProtectedRoute = ({ element, allowedRoles }: ProtectedRouteProps) => {
 
   if (allowedRoles && currentUser && !allowedRoles.includes(currentUser.role)) {
     // Redirect to appropriate dashboard based on role
-    if (currentUser.role === 'staff') {
-      return <Navigate to="/staff" replace />;
-    } else if (currentUser.role === 'ceo') {
+    if (currentUser.role === 'ceo') {
       return <Navigate to="/ceo" replace />;
     } else if (currentUser.role === 'accountant') {
       return <Navigate to="/accountant" replace />;
@@ -51,10 +48,6 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/login" element={!currentUser ? <LoginPage /> : <Navigate to="/" />} />
       
-      <Route path="/staff" element={
-        <ProtectedRoute element={<StaffDashboard />} allowedRoles={['staff']} />
-      } />
-      
       <Route path="/ceo" element={
         <ProtectedRoute element={<CEODashboard />} allowedRoles={['ceo']} />
       } />
@@ -65,7 +58,6 @@ const AppRoutes = () => {
       
       <Route path="/" element={
         currentUser ? (
-          currentUser.role === 'staff' ? <Navigate to="/staff" replace /> :
           currentUser.role === 'ceo' ? <Navigate to="/ceo" replace /> :
           currentUser.role === 'accountant' ? <Navigate to="/accountant" replace /> :
           <Navigate to="/login" replace />

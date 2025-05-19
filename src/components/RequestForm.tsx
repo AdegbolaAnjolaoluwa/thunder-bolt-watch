@@ -44,7 +44,16 @@ const RequestForm: React.FC = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    createRequest(data);
+    // Ensure all required fields are included
+    const requestData = {
+      amount: data.amount,
+      purpose: data.purpose,
+      description: data.description,
+      attachmentUrl: data.attachmentUrl || undefined,
+      requestedFor: data.requestedFor,
+    };
+    
+    createRequest(requestData);
     form.reset();
   };
 
@@ -92,7 +101,7 @@ const RequestForm: React.FC = () => {
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount ($)</FormLabel>
+                  <FormLabel>Amount (₦)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

@@ -24,7 +24,7 @@ interface RequestListProps {
   onApprove?: (id: string, comments: string) => void;
   onReject?: (id: string, comments: string) => void;
   onRelease?: (id: string) => void;
-  onMarkDone?: (id: string) => void; // New prop
+  onMarkDone?: (id: string) => void;
 }
 
 const RequestList: React.FC<RequestListProps> = ({
@@ -34,7 +34,7 @@ const RequestList: React.FC<RequestListProps> = ({
   onApprove,
   onReject,
   onRelease,
-  onMarkDone, // New prop
+  onMarkDone,
 }) => {
   const { currentUser } = useAuth();
   const [selectedRequest, setSelectedRequest] = useState<FundRequest | null>(null);
@@ -101,8 +101,7 @@ const RequestList: React.FC<RequestListProps> = ({
             <TableHeader className="bg-black/5">
               <TableRow>
                 <TableHead>ID</TableHead>
-                {currentUser?.role !== 'staff' && <TableHead>Requestor</TableHead>}
-                {currentUser?.role === 'accountant' && <TableHead>Requested For</TableHead>}
+                <TableHead>Requested For</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Purpose</TableHead>
                 <TableHead>Date Created</TableHead>
@@ -113,7 +112,7 @@ const RequestList: React.FC<RequestListProps> = ({
             <TableBody>
               {requests.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={currentUser?.role === 'accountant' ? 8 : (currentUser?.role !== 'staff' ? 7 : 6)} className="text-center text-gray-500">
+                  <TableCell colSpan={7} className="text-center text-gray-500">
                     No requests found
                   </TableCell>
                 </TableRow>
@@ -121,9 +120,8 @@ const RequestList: React.FC<RequestListProps> = ({
                 requests.map((request) => (
                   <TableRow key={request.id}>
                     <TableCell className="font-medium">{request.id}</TableCell>
-                    {currentUser?.role !== 'staff' && <TableCell>{request.userName}</TableCell>}
-                    {currentUser?.role === 'accountant' && <TableCell>{request.requestedFor || '-'}</TableCell>}
-                    <TableCell className="text-red-800 font-medium">${request.amount.toLocaleString()}</TableCell>
+                    <TableCell>{request.requestedFor || '-'}</TableCell>
+                    <TableCell className="text-red-800 font-medium">₦{request.amount.toLocaleString()}</TableCell>
                     <TableCell>{request.purpose}</TableCell>
                     <TableCell>{formatDate(request.dateCreated)}</TableCell>
                     <TableCell>{getStatusBadge(request.status)}</TableCell>
@@ -174,7 +172,7 @@ const RequestList: React.FC<RequestListProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-500">Amount</p>
-                <p className="text-sm text-red-800 font-medium">${selectedRequest?.amount.toLocaleString()}</p>
+                <p className="text-sm text-red-800 font-medium">₦{selectedRequest?.amount.toLocaleString()}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Purpose</p>
@@ -197,7 +195,7 @@ const RequestList: React.FC<RequestListProps> = ({
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button variant="outline" className="border-gold-200" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
             <Button 

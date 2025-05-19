@@ -16,13 +16,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Mock users for demonstration purposes
 const MOCK_USERS: User[] = [
   {
-    id: '1',
-    name: 'John Staff',
-    email: 'staff@example.com',
-    role: 'staff',
-    photoURL: 'https://i.pravatar.cc/150?img=1'
-  },
-  {
     id: '2',
     name: 'Jane CEO',
     email: 'ceo@example.com',
@@ -39,7 +32,6 @@ const MOCK_USERS: User[] = [
 ];
 
 const MOCK_PASSWORDS: Record<string, string> = {
-  'staff@example.com': 'password',
   'ceo@example.com': 'password',
   'accountant@example.com': 'password'
 };

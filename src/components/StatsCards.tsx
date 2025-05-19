@@ -33,42 +33,15 @@ const StatsCards: React.FC<StatsCardsProps> = ({ requests, userRole }) => {
   const approvedCount = requests.filter(req => req.status === 'approved').length;
   const rejectedCount = requests.filter(req => req.status === 'rejected').length;
   const releasedCount = requests.filter(req => req.status === 'released').length;
+  const doneCount = requests.filter(req => req.status === 'done').length;
   
   const totalAmount = requests.reduce((sum, req) => sum + req.amount, 0);
   const releasedAmount = requests
-    .filter(req => req.status === 'released')
+    .filter(req => req.status === 'released' || req.status === 'done')
     .reduce((sum, req) => sum + req.amount, 0);
   
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {userRole === 'staff' && (
-        <>
-          <StatCard 
-            title="Total Requests" 
-            value={requests.length.toString()} 
-            description="Total number of requests submitted"
-          />
-          <StatCard 
-            title="Pending" 
-            value={pendingCount.toString()} 
-            description="Requests awaiting approval"
-            className="border-yellow-200"
-          />
-          <StatCard 
-            title="Approved" 
-            value={approvedCount.toString()} 
-            description="Requests approved by CEO"
-            className="border-blue-200"
-          />
-          <StatCard 
-            title="Released" 
-            value={releasedCount.toString()} 
-            description="Requests with funds released"
-            className="border-green-200"
-          />
-        </>
-      )}
-
       {userRole === 'ceo' && (
         <>
           <StatCard 
@@ -91,7 +64,7 @@ const StatsCards: React.FC<StatsCardsProps> = ({ requests, userRole }) => {
           />
           <StatCard 
             title="Total Amount" 
-            value={`$${totalAmount.toLocaleString()}`} 
+            value={`₦${totalAmount.toLocaleString()}`} 
             description="Value of all requests"
           />
         </>
@@ -100,9 +73,15 @@ const StatsCards: React.FC<StatsCardsProps> = ({ requests, userRole }) => {
       {userRole === 'accountant' && (
         <>
           <StatCard 
-            title="Pending Release" 
+            title="Pending Approval" 
+            value={pendingCount.toString()} 
+            description="Requests awaiting CEO approval"
+            className="border-yellow-200"
+          />
+          <StatCard 
+            title="Approved" 
             value={approvedCount.toString()} 
-            description="Approved requests awaiting funds release"
+            description="Approved requests awaiting release"
             className="border-blue-200"
           />
           <StatCard 
@@ -112,14 +91,20 @@ const StatsCards: React.FC<StatsCardsProps> = ({ requests, userRole }) => {
             className="border-green-200"
           />
           <StatCard 
+            title="Completed" 
+            value={doneCount.toString()} 
+            description="Requests marked as done"
+            className="border-black"
+          />
+          <StatCard 
             title="Released Amount" 
-            value={`$${releasedAmount.toLocaleString()}`} 
+            value={`₦${releasedAmount.toLocaleString()}`} 
             description="Total funds released"
             className="border-green-200"
           />
           <StatCard 
             title="Pending Amount" 
-            value={`$${(totalAmount - releasedAmount).toLocaleString()}`} 
+            value={`₦${(totalAmount - releasedAmount).toLocaleString()}`} 
             description="Funds pending release"
             className="border-yellow-200"
           />
