@@ -55,17 +55,17 @@ const AccountantDashboard: React.FC = () => {
         </div>
         
         <div className="md:col-span-2">
-          <Tabs defaultValue="pending">
+          <Tabs defaultValue="approved">
             <TabsList className="grid grid-cols-3 mb-4">
-              <TabsTrigger value="pending">Pending Release ({approvedRequests.length})</TabsTrigger>
+              <TabsTrigger value="approved">Pending Release ({approvedRequests.length})</TabsTrigger>
               <TabsTrigger value="released">Active ({releasedRequests.length})</TabsTrigger>
               <TabsTrigger value="done">Completed ({doneRequests.length})</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="pending">
+            <TabsContent value="approved">
               <RequestList
                 requests={approvedRequests}
-                title="Pending Fund Release"
+                title="Approved Requests"
                 description="Requests approved by CEO, awaiting your fund release"
                 onRelease={releaseFunds}
               />
