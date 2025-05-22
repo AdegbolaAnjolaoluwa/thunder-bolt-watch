@@ -16,6 +16,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
+import { Memo } from 'lucide-react';
 
 interface RequestListProps {
   requests: FundRequest[];
@@ -25,6 +26,7 @@ interface RequestListProps {
   onReject?: (id: string, comments: string) => void;
   onRelease?: (id: string) => void;
   onMarkDone?: (id: string) => void;
+  onConvertToMemo?: (id: string, memoText: string) => void; // New prop
 }
 
 const RequestList: React.FC<RequestListProps> = ({
@@ -35,14 +37,15 @@ const RequestList: React.FC<RequestListProps> = ({
   onReject,
   onRelease,
   onMarkDone,
+  onConvertToMemo // New prop
 }) => {
   const { currentUser } = useAuth();
   const [selectedRequest, setSelectedRequest] = useState<FundRequest | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
+  const [actionType, setActionType] = useState<'approve' | 'reject' | 'memo' | null>(null); // Added 'memo'
   const [comments, setComments] = useState('');
 
-  const handleAction = (request: FundRequest, action: 'approve' | 'reject') => {
+  const handleAction = (request: FundRequest, action: 'approve' | 'reject' | 'memo') => { // Added 'memo'
     setSelectedRequest(request);
     setActionType(action);
     setIsDialogOpen(true);
@@ -56,6 +59,8 @@ const RequestList: React.FC<RequestListProps> = ({
       onApprove(selectedRequest.id, comments);
     } else if (actionType === 'reject' && onReject) {
       onReject(selectedRequest.id, comments);
+    } else if (actionType === 'memo' && onConvertToMemo) {
+      onConvertToMemo(selectedRequest.id, comments);
     }
     
     setIsDialogOpen(false);
@@ -137,9 +142,16 @@ const RequestList: React.FC<RequestListProps> = ({
                         </div>
                       )}
                       {currentUser?.role === 'accountant' && request.status === 'approved' && onRelease && (
-                        <Button size="sm" className="bg-red-900 hover:bg-red-800" onClick={() => onRelease(request.id)}>
-                          Release Funds
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button size="sm" className="bg-red-900 hover:bg-red-800" onClick={() => onRelease(request.id)}>
+                            Release Funds
+                          </Button>
+                          {onConvertToMemo && (
+                            <Button size="sm" variant="outline" className="border-red-200" onClick={() => handleAction(request, 'memo')}>
+                              <Memo className="mr-1 h-4 w-4" /> To Memo
+                            </Button>
+                          )}
+                        </div>
                       )}
                       {currentUser?.role === 'accountant' && request.status === 'released' && onMarkDone && (
                         <Button size="sm" className="bg-black hover:bg-black/80 text-white" onClick={() => onMarkDone(request.id)}>
@@ -159,12 +171,15 @@ const RequestList: React.FC<RequestListProps> = ({
         <DialogContent className="border-gold-200">
           <DialogHeader>
             <DialogTitle className="text-red-900">
-              {actionType === 'approve' ? 'Approve Request' : 'Reject Request'}
+              {actionType === 'approve' ? 'Approve Request' : 
+               actionType === 'reject' ? 'Reject Request' : 'Convert to Memo'}
             </DialogTitle>
             <DialogDescription>
               {actionType === 'approve' 
                 ? 'Add any comments to approve this fund request'
-                : 'Please provide a reason for rejecting this request'}
+                : actionType === 'reject'
+                ? 'Please provide a reason for rejecting this request'
+                : 'Add memo details for this fund request'}
             </DialogDescription>
           </DialogHeader>
           
@@ -182,13 +197,16 @@ const RequestList: React.FC<RequestListProps> = ({
             
             <div>
               <label htmlFor="comments" className="text-sm font-medium">
-                {actionType === 'approve' ? 'Comments (Optional)' : 'Reason for Rejection'}
+                {actionType === 'approve' ? 'Comments (Optional)' : 
+                 actionType === 'reject' ? 'Reason for Rejection' : 'Memo Text'}
               </label>
               <Textarea
                 id="comments"
                 value={comments}
                 onChange={(e) => setComments(e.target.value)}
-                placeholder="Add your comments here..."
+                placeholder={actionType === 'memo' 
+                  ? "Enter memo details..."
+                  : "Add your comments here..."}
                 className="mt-1 border-gold-200"
               />
             </div>
@@ -200,11 +218,11 @@ const RequestList: React.FC<RequestListProps> = ({
             </Button>
             <Button 
               onClick={confirmAction} 
-              className={actionType === 'approve' ? "bg-red-900 hover:bg-red-800 text-white" : ""}
-              variant={actionType === 'approve' ? 'default' : 'destructive'}
-              disabled={actionType === 'reject' && !comments}
+              className={actionType === 'approve' || actionType === 'memo' ? "bg-red-900 hover:bg-red-800 text-white" : ""}
+              variant={actionType === 'approve' || actionType === 'memo' ? 'default' : 'destructive'}
+              disabled={(actionType === 'reject' && !comments) || (actionType === 'memo' && !comments)}
             >
-              {actionType === 'approve' ? 'Approve' : 'Reject'}
+              {actionType === 'approve' ? 'Approve' : actionType === 'reject' ? 'Reject' : 'Create Memo'}
             </Button>
           </DialogFooter>
         </DialogContent>

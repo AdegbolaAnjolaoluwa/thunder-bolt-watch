@@ -20,3 +20,15 @@ export interface FundRequest {
   attachmentUrl?: string;
   requestedFor?: string; // Added to track who the request is for (staff name)
 }
+
+export interface Memo {
+  id: string;
+  requestId: string;
+  text: string;
+  amount: number;
+  purpose: string;
+  requestedFor: string;
+  createdBy: string;
+  createdById: string;
+  createdAt: string;
+}

@@ -5,21 +5,25 @@ import { useRequests } from '@/contexts/RequestContext';
 import DashboardLayout from '@/components/DashboardLayout';
 import RequestForm from '@/components/RequestForm';
 import RequestList from '@/components/RequestList';
+import MemoList from '@/components/MemoList';
 import StatsCards from '@/components/StatsCards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, Memo } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 
 const AccountantDashboard: React.FC = () => {
   const { currentUser } = useAuth();
   const { 
     requests, 
+    memos,
     getApprovedRequests, 
     getReleasedRequests,
     getDoneRequests,
+    getMemos,
     releaseFunds,
-    markAsDone
+    markAsDone,
+    convertToMemo
   } = useRequests();
 
   if (!currentUser) return null;
@@ -27,6 +31,7 @@ const AccountantDashboard: React.FC = () => {
   const approvedRequests = getApprovedRequests();
   const releasedRequests = getReleasedRequests();
   const doneRequests = getDoneRequests();
+  const accountantMemos = getMemos();
 
   const handleExportReports = () => {
     toast.success("Report generated", {
@@ -56,10 +61,11 @@ const AccountantDashboard: React.FC = () => {
         
         <div className="md:col-span-2">
           <Tabs defaultValue="approved">
-            <TabsList className="grid grid-cols-3 mb-4">
+            <TabsList className="grid grid-cols-4 mb-4">
               <TabsTrigger value="approved">Pending Release ({approvedRequests.length})</TabsTrigger>
               <TabsTrigger value="released">Active ({releasedRequests.length})</TabsTrigger>
               <TabsTrigger value="done">Completed ({doneRequests.length})</TabsTrigger>
+              <TabsTrigger value="memos">Memos ({accountantMemos.length})</TabsTrigger>
             </TabsList>
             
             <TabsContent value="approved">
@@ -68,6 +74,7 @@ const AccountantDashboard: React.FC = () => {
                 title="Approved Requests"
                 description="Requests approved by CEO, awaiting your fund release"
                 onRelease={releaseFunds}
+                onConvertToMemo={convertToMemo}
               />
             </TabsContent>
             
@@ -85,6 +92,14 @@ const AccountantDashboard: React.FC = () => {
                 requests={doneRequests}
                 title="Completed Requests"
                 description="Requests that have been marked as done"
+              />
+            </TabsContent>
+
+            <TabsContent value="memos">
+              <MemoList
+                memos={accountantMemos}
+                title="Accounting Memos"
+                description="Internal memos created from fund requests"
               />
             </TabsContent>
           </Tabs>

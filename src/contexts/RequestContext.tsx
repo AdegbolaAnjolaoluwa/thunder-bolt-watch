@@ -1,22 +1,24 @@
-
 import React, { createContext, useContext, useState } from 'react';
-import { FundRequest, RequestStatus } from '@/types/request';
+import { FundRequest, RequestStatus, Memo } from '@/types/request';
 import { User } from '@/types/auth';
 import { toast } from "@/components/ui/sonner";
 
 interface RequestContextType {
   requests: FundRequest[];
+  memos: Memo[];
   createRequest: (data: Omit<FundRequest, 'id' | 'status' | 'dateCreated' | 'userId' | 'userName'>) => void;
   approveRequest: (requestId: string, comments?: string) => void;
   rejectRequest: (requestId: string, comments?: string) => void;
   releaseFunds: (requestId: string) => void;
-  markAsDone: (requestId: string) => void; // New function
+  markAsDone: (requestId: string) => void;
+  convertToMemo: (requestId: string, memoText?: string) => void; // New function
   getUserRequests: (userId: string) => FundRequest[];
   getPendingRequests: () => FundRequest[];
   getApprovedRequests: () => FundRequest[];
   getRejectedRequests: () => FundRequest[];
   getReleasedRequests: () => FundRequest[];
-  getDoneRequests: () => FundRequest[]; // New function
+  getDoneRequests: () => FundRequest[];
+  getMemos: () => Memo[];
 }
 
 // Mock initial requests for demonstration
@@ -77,6 +79,9 @@ const INITIAL_REQUESTS: FundRequest[] = [
   }
 ];
 
+// Initial memos
+const INITIAL_MEMOS: Memo[] = [];
+
 const RequestContext = createContext<RequestContextType | undefined>(undefined);
 
 export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser: User | null }> = ({ 
@@ -84,6 +89,7 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
   currentUser 
 }) => {
   const [requests, setRequests] = useState<FundRequest[]>(INITIAL_REQUESTS);
+  const [memos, setMemos] = useState<Memo[]>(INITIAL_MEMOS);
 
   const createRequest = (data: Omit<FundRequest, 'id' | 'status' | 'dateCreated' | 'userId' | 'userName'>) => {
     if (!currentUser) {
@@ -197,7 +203,7 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
     });
   };
 
-  // New function to mark released funds as done
+  // Function to mark released funds as done
   const markAsDone = (requestId: string) => {
     if (!currentUser || currentUser.role !== 'accountant') {
       toast.error("Permission denied", {
@@ -224,6 +230,45 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
     });
   };
 
+  // New function to convert a request to a memo
+  const convertToMemo = (requestId: string, memoText?: string) => {
+    if (!currentUser || currentUser.role !== 'accountant') {
+      toast.error("Permission denied", {
+        description: "Only accountants can create memos"
+      });
+      return;
+    }
+
+    // Find the request to convert
+    const request = requests.find(req => req.id === requestId);
+    if (!request) {
+      toast.error("Request not found", {
+        description: "The request you're trying to convert was not found"
+      });
+      return;
+    }
+
+    // Create a new memo
+    const newMemo: Memo = {
+      id: Date.now().toString(),
+      requestId: request.id,
+      text: memoText || `Memo regarding fund request for ${request.requestedFor}: ${request.purpose}`,
+      amount: request.amount,
+      createdBy: currentUser.name,
+      createdById: currentUser.id,
+      createdAt: new Date().toISOString(),
+      purpose: request.purpose,
+      requestedFor: request.requestedFor || '',
+    };
+
+    // Add the memo to the list
+    setMemos(prevMemos => [newMemo, ...prevMemos]);
+    
+    toast.success("Memo created", {
+      description: "The request has been converted to a memo"
+    });
+  };
+
   const getUserRequests = (userId: string) => {
     return requests.filter(request => request.userId === userId);
   };
@@ -237,20 +282,24 @@ export const RequestProvider: React.FC<{ children: React.ReactNode, currentUser:
   const getRejectedRequests = () => getRequestsByStatus('rejected');
   const getReleasedRequests = () => getRequestsByStatus('released');
   const getDoneRequests = () => getRequestsByStatus('done');
+  const getMemos = () => memos;
 
   const value = {
     requests,
+    memos,
     createRequest,
     approveRequest,
     rejectRequest,
     releaseFunds,
     markAsDone,
+    convertToMemo,
     getUserRequests,
     getPendingRequests,
     getApprovedRequests,
     getRejectedRequests,
     getReleasedRequests,
-    getDoneRequests
+    getDoneRequests,
+    getMemos
   };
 
   return <RequestContext.Provider value={value}>{children}</RequestContext.Provider>;
