@@ -11,7 +11,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Memo as MemoIcon } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 interface MemoListProps {
   memos: Memo[];
@@ -33,7 +33,7 @@ const MemoList: React.FC<MemoListProps> = ({ memos, title = "Memos", description
     <Card className="border-gold-200 bg-white shadow">
       <CardHeader className="bg-black/5 border-b border-gold-100">
         <div className="flex items-center">
-          <MemoIcon className="mr-2 h-5 w-5 text-red-800" />
+          <FileText className="mr-2 h-5 w-5 text-red-800" />
           <CardTitle className="text-red-900">{title}</CardTitle>
         </div>
         {description && <CardDescription>{description}</CardDescription>}

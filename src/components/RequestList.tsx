@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { FundRequest } from '@/types/request';
@@ -16,7 +15,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Memo } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 interface RequestListProps {
   requests: FundRequest[];
@@ -148,7 +147,7 @@ const RequestList: React.FC<RequestListProps> = ({
                           </Button>
                           {onConvertToMemo && (
                             <Button size="sm" variant="outline" className="border-red-200" onClick={() => handleAction(request, 'memo')}>
-                              <Memo className="mr-1 h-4 w-4" /> To Memo
+                              <FileText className="mr-1 h-4 w-4" /> To Memo
                             </Button>
                           )}
                         </div>

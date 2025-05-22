@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRequests } from '@/contexts/RequestContext';
@@ -9,7 +8,7 @@ import MemoList from '@/components/MemoList';
 import StatsCards from '@/components/StatsCards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Download, Memo } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 
 const AccountantDashboard: React.FC = () => {
