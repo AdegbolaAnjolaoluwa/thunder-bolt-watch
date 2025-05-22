@@ -62,7 +62,7 @@ const LoginPage: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-black/95 to-red-950/20 py-12 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-md w-full space-y-8">
         <motion.div 
@@ -83,15 +83,15 @@ const LoginPage: React.FC = () => {
             />
           </motion.div>
           <motion.h1 
-            className="mt-4 text-3xl font-bold tracking-tight text-white"
+            className="mt-4 text-3xl font-bold tracking-tight text-gray-900"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <span className="text-yellow-500">Thunder</span> Bolt <span className="text-red-600">Watch</span>
+            <span className="text-yellow-600">Thunder</span> Bolt <span className="text-red-600">Watch</span>
           </motion.h1>
           <motion.p 
-            className="mt-2 text-sm text-gray-300"
+            className="mt-2 text-sm text-gray-600"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
@@ -105,20 +105,20 @@ const LoginPage: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          <Card className="border-gold-200 backdrop-blur-sm bg-black/40">
-            <CardHeader className="bg-black/50 border-b border-gold-100/30">
+          <Card className="shadow-lg border-gray-200">
+            <CardHeader className="bg-gray-50 border-b border-gray-200">
               <motion.div
                 initial={{ x: -10, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.7, duration: 0.3 }}
               >
-                <CardTitle className="text-white">Sign In</CardTitle>
-                <CardDescription className="text-gray-300">
+                <CardTitle className="text-gray-900">Sign In</CardTitle>
+                <CardDescription className="text-gray-600">
                   Enter your credentials to access your account
                 </CardDescription>
               </motion.div>
             </CardHeader>
-            <CardContent className="pt-5">
+            <CardContent className="pt-5 bg-white">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <motion.div
@@ -131,16 +131,16 @@ const LoginPage: React.FC = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">Email</FormLabel>
+                          <FormLabel className="text-gray-800">Email</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="email@example.com"
                               type="email"
-                              className="bg-black/30 border-gray-700 text-white"
+                              className="bg-white border-gray-300 text-gray-900"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-red-400" />
+                          <FormMessage className="text-red-600" />
                         </FormItem>
                       )}
                     />
@@ -156,16 +156,16 @@ const LoginPage: React.FC = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">Password</FormLabel>
+                          <FormLabel className="text-gray-800">Password</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your password"
                               type="password"
-                              className="bg-black/30 border-gray-700 text-white"
+                              className="bg-white border-gray-300 text-gray-900"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-red-400" />
+                          <FormMessage className="text-red-600" />
                         </FormItem>
                       )}
                     />
@@ -177,9 +177,9 @@ const LoginPage: React.FC = () => {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <Alert variant="destructive" className="bg-red-900/50 border-red-700">
+                      <Alert variant="destructive" className="bg-red-50 border-red-300">
                         <Lock className="h-4 w-4" />
-                        <AlertDescription className="text-white">{error}</AlertDescription>
+                        <AlertDescription className="text-red-800">{error}</AlertDescription>
                       </Alert>
                     </motion.div>
                   )}
@@ -202,9 +202,9 @@ const LoginPage: React.FC = () => {
                 </form>
               </Form>
             </CardContent>
-            <CardFooter className="flex flex-col space-y-4 border-t border-gold-100/30 bg-black/50">
+            <CardFooter className="flex flex-col space-y-4 border-t border-gray-200 bg-gray-50">
               <motion.div 
-                className="text-sm text-center text-gray-400"
+                className="text-sm text-center text-gray-600"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.1, duration: 0.3 }}
@@ -226,10 +226,10 @@ const LoginPage: React.FC = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-gold-200/30 hover:bg-gold-700/20 text-gold-100 w-full"
+                      className="border-gray-300 hover:bg-gray-100 text-gray-800 w-full"
                       onClick={() => fillCredentials(cred.email, cred.password)}
                     >
-                      <Shield className="mr-2 h-4 w-4 text-gold-300" />
+                      <Shield className="mr-2 h-4 w-4 text-blue-500" />
                       {cred.role}
                     </Button>
                   </motion.div>
