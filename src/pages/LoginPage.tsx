@@ -78,18 +78,10 @@ const LoginPage: React.FC = () => {
           >
             <img 
               src="/lovable-uploads/1c258998-4e1a-4eb6-bb02-8aa16e8f73f1.png" 
-              alt="Thunder Bolt Watch Logo" 
+              alt="Logo" 
               className="h-32 w-auto" 
             />
           </motion.div>
-          <motion.h1 
-            className="mt-4 text-3xl font-bold tracking-tight text-gray-900"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <span className="text-yellow-600">Thunder</span> Bolt <span className="text-red-600">Watch</span>
-          </motion.h1>
           <motion.p 
             className="mt-2 text-sm text-gray-600"
             initial={{ opacity: 0 }}
