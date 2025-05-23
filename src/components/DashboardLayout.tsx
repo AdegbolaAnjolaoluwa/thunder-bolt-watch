@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
-import { LogOut, Zap } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -34,12 +33,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
       <header className="bg-black text-white shadow-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Zap className="h-8 w-8 text-yellow-500 mr-3" />
             <img 
               src="/lovable-uploads/d96fb1a5-2827-4ebe-ba2e-b636930c2119.png" 
+              alt="Thunder Icon" 
+              className="h-8 w-8 mr-3" 
+            />
+            <img 
+              src="/lovable-uploads/1c258998-4e1a-4eb6-bb02-8aa16e8f73f1.png" 
               alt="Logo" 
               className="h-8 w-auto mr-3" 
             />
+            <h1 className="text-xl font-bold tracking-wide">
+              <span className="text-yellow-500">Thunder</span> Bolt <span className="text-red-600">Watch</span>
+            </h1>
           </div>
           
           <div className="flex items-center">
